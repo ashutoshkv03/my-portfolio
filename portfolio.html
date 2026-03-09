@@ -433,13 +433,70 @@
       color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
     }
     .terminal-output {
-      padding: 1.3rem 1.2rem;
+      padding: 1.2rem 1.2rem 0.8rem;
       font-family: var(--font-mono); font-size: 0.78rem;
-      line-height: 1.9; color: #d7d2c8; white-space: pre-wrap;
+      line-height: 1.9; color: #d7d2c8;
+      min-height: 260px; max-height: 340px; overflow-y: auto;
     }
     .prompt { color: var(--success); }
     .cmd { color: #f0ece4; }
-    .terminal-response { color: #bdb7aa; }
+    .terminal-output {
+      padding: 1.2rem 1.2rem 0.8rem;
+      font-family: var(--font-mono); font-size: 0.78rem;
+      line-height: 1.9; color: #d7d2c8;
+      min-height: 260px; max-height: 340px; overflow-y: auto;
+    }
+    .terminal-help {
+      padding: 0.8rem 1.2rem;
+      border-bottom: 1px solid var(--border);
+      background: #151614;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .terminal-help strong {
+      color: var(--ink2);
+      font-weight: 500;
+    }
+
+    .terminal-entry {
+      margin-bottom: 0.8rem;
+    }
+
+    .terminal-command-line {
+      color: #f0ece4;
+    }
+
+    .terminal-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.95rem 1.2rem 1.2rem;
+      border-top: 1px solid var(--border);
+      background: #121312;
+      font-family: var(--font-mono);
+    }
+
+    .terminal-input-row .prompt {
+      flex-shrink: 0;
+    }
+
+    .terminal-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #f0ece4;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      caret-color: var(--success);
+    }
+
+    .terminal-input::placeholder {
+      color: var(--muted);
+    }
 
     /* contact */
     #contact { background: var(--surface); border-top: 1px solid var(--border); }
@@ -844,29 +901,28 @@
         </div>
         <div class="terminal-title">ashutosh@portfolio:~</div>
       </div>
-      <div class="terminal-output"><span class="prompt">$</span> <span class="cmd">whoami</span>
-<span class="terminal-response">Venkata Ashutosh Kande &mdash; Full Stack Developer &amp; ML Engineer, currently pursuing an MS in Computer Science and Engineering at Santa Clara University.</span>
+      <div class="terminal-help">
+  <strong>Try:</strong> help, whoami, skills, projects, learning, research, contact, clear
+</div>
 
-<span class="prompt">$</span> <span class="cmd">skills</span>
-<span class="terminal-response">Java, Python, JavaScript, React, Node.js, SQL/NoSQL, TensorFlow, Keras, Scikit-Learn, Spring Boot, Django</span>
-
-<span class="prompt">$</span> <span class="cmd">projects</span>
-<span class="terminal-response">1. Infant Cry Analysis
-2. Autism Detection in Children
-3. Full Stack healthcare-focused internship work at Ethnus</span>
-
-<span class="prompt">$</span> <span class="cmd">learning</span>
-<span class="terminal-response">MLOps, AWS foundations, distributed systems, and DevOps workflows.</span>
-
-<span class="prompt">$</span> <span class="cmd">research</span>
-<span class="terminal-response">Published work in IEEE Xplore and Springer Nature, focused on image steganography and harmful brain activity prediction.</span>
-
-<span class="prompt">$</span> <span class="cmd">contact</span>
-<span class="terminal-response">email: ashutoshkv333@gmail.com
-linkedin: linkedin.com/in/ashutoshkande
-location: Santa Clara, CA, USA</span></div>
-    </div>
+<div class="terminal-output" id="terminal-output">
+  <div class="terminal-entry">
+    <div class="terminal-command-line"><span class="prompt">$</span> <span class="cmd">help</span></div>
+    <div class="terminal-response">Type a command below to explore my profile.</div>
   </div>
+</div>
+
+<div class="terminal-input-row">
+  <span class="prompt">$</span>
+  <input
+    id="terminal-input"
+    class="terminal-input"
+    type="text"
+    autocomplete="off"
+    spellcheck="false"
+    placeholder="type a command and press enter"
+  />
+</div>
 </section>
 
 <!-- 08 contact -->
@@ -1002,6 +1058,75 @@ location: Santa Clara, CA, USA</span></div>
     if (e.key === 'Escape') { closeContactBtn(); closeResume(); }
   });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  // Terminal logic
+    const terminalInput = document.getElementById('terminal-input');
+      const terminalOutput = document.getElementById('terminal-output');
+
+      const terminalCommands = {
+        help: `Available commands:
+    whoami   - About me
+    skills   - Technical stack
+    projects - Featured work
+    learning - Current focus areas
+    research - Publications
+    contact  - Reach me
+    clear    - Clear terminal`,
+
+        whoami: `Venkata Ashutosh Kande
+    Full Stack Developer & ML Engineer
+    MS in Computer Science and Engineering at Santa Clara University`,
+
+        skills: `Java, Python, JavaScript, React, Node.js, SQL/NoSQL,
+    TensorFlow, Keras, Scikit-Learn, Spring Boot, Django`,
+
+        projects: `1. Infant Cry Analysis
+    2. Autism Detection in Children
+    3. Full Stack healthcare-focused internship work at Ethnus`,
+
+        learning: `MLOps, AWS foundations, distributed systems, and DevOps workflows.`,
+
+        research: `Published work in IEEE Xplore and Springer Nature,
+    focused on image steganography and harmful brain activity prediction.`,
+
+        contact: `email: ashutoshkv333@gmail.com
+    linkedin: linkedin.com/in/ashutoshkande
+    location: Santa Clara, CA, USA`
+      };
+
+      function appendTerminalEntry(command, response) {
+        const entry = document.createElement('div');
+        entry.className = 'terminal-entry';
+        entry.innerHTML = `
+          <div class="terminal-command-line"><span class="prompt">$</span> <span class="cmd">${command}</span></div>
+          <div class="terminal-response">${response}</div>
+        `;
+        terminalOutput.appendChild(entry);
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
+
+      if (terminalInput && terminalOutput) {
+        terminalInput.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter') {
+            const command = terminalInput.value.trim().toLowerCase();
+            if (!command) return;
+
+            if (command === 'clear') {
+              terminalOutput.innerHTML = '';
+            } else if (terminalCommands[command]) {
+              appendTerminalEntry(command, terminalCommands[command]);
+            } else {
+              appendTerminalEntry(command, 'Command not found. Type "help".');
+            }
+
+            terminalInput.value = '';
+          }
+        });
+
+        const terminalWrap = document.querySelector('.terminal-wrap');
+        if (terminalWrap) {
+          terminalWrap.addEventListener('click', () => terminalInput.focus());
+        }
+      }
 </script>
 
 </body>
