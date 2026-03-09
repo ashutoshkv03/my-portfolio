@@ -1039,19 +1039,13 @@
   function closeResume() { resumeModal.classList.remove('open'); document.body.style.overflow = ''; }
   function closeResumeOverlay(e) { if (e.target === resumeModal) closeResume(); }
   function forceDownloadResume() {
+    const a = document.createElement('a');
+    a.href = 'Resume.pdf';
+    a.download = 'Ashutosh_Kande_Resume.pdf';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
     closeResume();
-    fetch('Resume.pdf')
-      .then(res => res.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'Ashutosh_Kande_Resume.pdf';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      });
   }
 
   document.addEventListener('keydown', e => {
