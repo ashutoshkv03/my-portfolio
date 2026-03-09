@@ -443,12 +443,6 @@
       font-family: var(--font-mono); font-size: 0.68rem;
       color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
     }
-    .terminal-output {
-      padding: 1.2rem 1.2rem 0.8rem;
-      font-family: var(--font-mono); font-size: 0.78rem;
-      line-height: 1.9; color: #d7d2c8;
-      min-height: 260px; max-height: 340px; overflow-y: auto;
-    }
     .prompt { color: var(--success); }
     .cmd { color: #f0ece4; }
     .terminal-output {
@@ -456,6 +450,7 @@
       font-family: var(--font-mono); font-size: 0.78rem;
       line-height: 1.9; color: #d7d2c8;
       min-height: 260px; max-height: 340px; overflow-y: auto;
+      white-space: pre-line;
     }
     .terminal-help {
       padding: 0.8rem 1.2rem;
@@ -1088,14 +1083,21 @@
       const terminalOutput = document.getElementById('terminal-output');
 
       const terminalCommands = {
-        help: `Available commands:
-    whoami   - About me
-    skills   - Technical stack
-    projects - Featured work
-    learning - Current focus areas
-    research - Publications
-    contact  - Reach me
-    clear    - Clear terminal`,
+      help: `Available commands:
+
+      whoami: Shows a short introduction about me.
+
+      skills: Lists the programming languages, frameworks, and tools I work with.
+
+      projects: Displays the main projects featured in this portfolio.
+
+      learning: Shows the technologies and topics I am currently exploring.
+
+      research: Lists my published research papers.
+
+      contact:  Displays my email, LinkedIn, and location.
+
+      clear: Clears the terminal screen.`,
 
         whoami: `Venkata Ashutosh Kande
     Full Stack Developer & ML Engineer
