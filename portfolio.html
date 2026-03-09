@@ -91,6 +91,17 @@
     }
     .nav-links a:hover { color: var(--accent); }
 
+    .nav-toggle {
+      display: none;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--ink);
+      font-size: 1.1rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 2px;
+      cursor: pointer;
+    }
+
     /* hero */
     #hero {
       min-height: 100vh;
@@ -609,25 +620,62 @@
     }
 
     @media (max-width: 640px) {
-      .contact-grid { grid-template-columns: 1fr; }
-      .nav-links { gap: 1.2rem; }
-      .nav-links a { font-size: 0.7rem; }
-    }
+  .contact-grid { grid-template-columns: 1fr; }
+
+  .nav-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  nav {
+    padding: 1rem 1.2rem;
+  }
+
+  .nav-links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--nav-bg);
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-links li {
+    list-style: none;
+  }
+
+  .nav-links a {
+    display: block;
+    font-size: 0.72rem;
+    padding: 0.9rem 1.2rem;
+    border-top: 1px solid rgba(255,255,255,0.03);
+  }
+}
   </style>
 </head>
 <body>
 
 <nav>
   <div class="nav-logo">A<span>.</span>Kande</div>
-  <ul class="nav-links">
-    <li><a href="#about">About</a></li>
-    <li><a href="#education">Education</a></li>
-    <li><a href="#experience">Experience</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#learning">Learning</a></li>
-    <li><a href="#publications">Research</a></li>
-    <li><a href="#terminal">Terminal</a></li>
-    <li><a href="#contact">Contact</a></li>
+  <button class="nav-toggle" onclick="toggleMenu()" aria-label="Open menu">&#9776;</button>
+  <ul class="nav-links" id="nav-links">
+    <li><a href="#about" onclick="toggleMenu()">About</a></li>
+    <li><a href="#education" onclick="toggleMenu()">Education</a></li>
+    <li><a href="#experience" onclick="toggleMenu()">Experience</a></li>
+    <li><a href="#projects" onclick="toggleMenu()">Projects</a></li>
+    <li><a href="#learning" onclick="toggleMenu()">Learning</a></li>
+    <li><a href="#publications" onclick="toggleMenu()">Research</a></li>
+    <li><a href="#terminal" onclick="toggleMenu()">Terminal</a></li>
+    <li><a href="#contact" onclick="toggleMenu()">Contact</a></li>
   </ul>
 </nav>
 
@@ -890,7 +938,7 @@
     <div class="section-header fade-in">
       <span class="section-num">07 &mdash; Terminal Mode</span>
       <h2 class="section-title">Quick Summary</h2>
-      <p class="section-copy">A quick terminal-style summary of my work, skills, and background.</p>
+      <p class="section-copy">A quick interactive terminal-style summary of my work, skills, and background.</p>
     </div>
     <div class="terminal-wrap fade-in">
       <div class="terminal-top">
@@ -1031,6 +1079,10 @@
     if (e.key === 'Escape') { closeContactBtn(); closeResume(); }
   });
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  function toggleMenu() {
+    document.getElementById('nav-links').classList.toggle('open');
+  }
   // Terminal logic
     const terminalInput = document.getElementById('terminal-input');
       const terminalOutput = document.getElementById('terminal-output');
