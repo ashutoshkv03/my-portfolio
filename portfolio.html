@@ -641,7 +641,7 @@
         <p class="hero-role">Full Stack Developer &amp; ML Engineer. Building intelligent systems and purposeful web experiences from Silicon Valley.</p>
         <div class="hero-links">
           <button onclick="openContact()" class="btn btn-primary">Get in Touch</button>
-          <button onclick="openResume()" class="btn btn-download">&#8595; Resume</button>
+          <a href="Resume.pdf" target="_blank" class="btn btn-download">&#8595; Resume</a>
           <a href="https://linkedin.com/in/ashutoshkande" target="_blank" class="btn btn-ghost">LinkedIn</a>
         </div>
       </div>
@@ -998,27 +998,6 @@
   </div>
 </div>
 
-<!-- resume modal -->
-<div id="resume-modal" class="resume-modal-overlay" onclick="closeResumeOverlay(event)">
-  <div class="resume-modal-box">
-    <button class="modal-close" onclick="closeResume()">&times;</button>
-    <p class="resume-eyebrow">Resume</p>
-    <h2 class="resume-title">Ashutosh Kande</h2>
-    <p class="resume-sub">How would you like to open the resume?</p>
-    <div class="resume-options">
-      <a href="Resume.pdf" target="_blank" onclick="closeResume()" class="resume-option-card">
-        <span class="resume-option-icon">&#128065;</span>
-        <div class="resume-option-label">View</div>
-        <div class="resume-option-desc">Open in a new tab</div>
-      </a>
-      <button onclick="forceDownloadResume()" class="resume-option-card">
-        <span class="resume-option-icon">&#8595;</span>
-        <div class="resume-option-label">Download</div>
-        <div class="resume-option-desc">Save PDF to device</div>
-      </button>
-    </div>
-  </div>
-</div>
 
 <footer>&copy; 2025 Venkata Ashutosh Kande</footer>
 
