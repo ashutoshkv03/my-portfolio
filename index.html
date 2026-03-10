@@ -1197,7 +1197,17 @@ function scrollSkills(direction) {
   const card = track.querySelector('.skill-group');
   const step = card ? card.getBoundingClientRect().width + 16 : 260;
 
-  track.scrollLeft += direction * step;
+  const maxScroll = track.scrollWidth - track.clientWidth;
+
+  if (direction === 1 && track.scrollLeft + step >= maxScroll) {
+    track.scrollTo({ left: 0, behavior: 'smooth' });
+  } 
+  else if (direction === -1 && track.scrollLeft <= 0) {
+    track.scrollTo({ left: maxScroll, behavior: 'smooth' });
+  } 
+  else {
+    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+  }
 }
 
 function scrollToSection(id) {
@@ -1207,6 +1217,31 @@ function scrollToSection(id) {
   }
 }
   // Terminal logic
+  /* subtle carousel hint animation */
+    function autoNudgeCarousel() {
+      const track = document.getElementById('skills-track');
+      if (!track) return;
+
+      const card = track.querySelector('.skill-group');
+      const step = card ? card.getBoundingClientRect().width + 16 : 260;
+
+      const maxScroll = track.scrollWidth - track.clientWidth;
+
+      if (Math.random() > 0.5) {
+        track.scrollBy({ left: step, behavior: 'smooth' });
+      } else {
+        track.scrollBy({ left: -step, behavior: 'smooth' });
+      }
+
+      if (track.scrollLeft >= maxScroll) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      }
+    }
+
+    /* run occasionally */
+    setInterval(() => {
+      autoNudgeCarousel();
+    }, 1500);
     const terminalInput = document.getElementById('terminal-input');
       const terminalOutput = document.getElementById('terminal-output');
 
