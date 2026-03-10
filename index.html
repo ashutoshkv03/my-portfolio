@@ -1218,25 +1218,39 @@ function scrollToSection(id) {
 }
   // Terminal logic
   /* subtle carousel hint animation */
-    function autoNudgeCarousel() {
-      const track = document.getElementById('skills-track');
-      if (!track) return;
+    let carouselPaused = false;
 
-      const card = track.querySelector('.skill-group');
-      const step = card ? card.getBoundingClientRect().width + 16 : 260;
+  function autoScrollCarousel() {
+    const track = document.getElementById('skills-track');
+    if (!track || carouselPaused) return;
 
-      const maxScroll = track.scrollWidth - track.clientWidth;
+    const card = track.querySelector('.skill-group');
+    const step = card ? card.getBoundingClientRect().width + 16 : 260;
 
-      if (Math.random() > 0.5) {
-        track.scrollBy({ left: step, behavior: 'smooth' });
-      } else {
-        track.scrollBy({ left: -step, behavior: 'smooth' });
-      }
+    const maxScroll = track.scrollWidth - track.clientWidth;
 
-      if (track.scrollLeft >= maxScroll) {
-        track.scrollTo({ left: 0, behavior: 'smooth' });
-      }
+    if (track.scrollLeft + step >= maxScroll) {
+      track.scrollTo({ left: 0, behavior: 'smooth' });
+    } else {
+      track.scrollBy({ left: step, behavior: 'smooth' });
     }
+  }
+
+  /* auto scroll every 1 seconds */
+  setInterval(autoScrollCarousel, 1000);
+
+  /* pause when user interacts */
+  const track = document.getElementById('skills-track');
+
+  if (track) {
+    track.addEventListener('touchstart', () => carouselPaused = true);
+    track.addEventListener('touchend', () => {
+      setTimeout(() => carouselPaused = false, 4000);
+    });
+
+    track.addEventListener('mouseenter', () => carouselPaused = true);
+    track.addEventListener('mouseleave', () => carouselPaused = false);
+  }
 
     /* run occasionally */
     setInterval(() => {
