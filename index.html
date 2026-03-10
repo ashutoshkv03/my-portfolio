@@ -362,6 +362,9 @@
     min-width: 0;
     width: 100%;
     padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+    scroll-snap-type: x mandatory;
   }
 
 .skills-track::-webkit-scrollbar {
@@ -375,9 +378,6 @@
   border: 1px solid var(--border);
   background: rgba(255,255,255,0.08);
   color: var(--ink);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow);
   cursor: pointer;
   font-size: 1rem;
   position: relative;
@@ -390,11 +390,9 @@
   padding: 1.5rem;
   background: var(--surface);
   border: 1px solid var(--border);
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-  box-shadow: var(--glass-shadow);
   border-radius: 20px;
   flex-shrink: 0;
+  scroll-snap-align: start;
 }
 
 .skill-group-title {
@@ -675,8 +673,8 @@
         height: 38px;
       }
       .skill-group {
-        min-width: 220px;
-        max-width: 220px;
+        min-width: 78%;
+        max-width: 78%;
       }
       section { scroll-margin-top: 110px; }
       #hero { grid-template-columns: 1fr; gap: 3rem; }
@@ -1190,25 +1188,32 @@
   document.getElementById('nav-links').classList.toggle('open');
 }
 
-function scrollSkills(direction) {
-  const track = document.getElementById('skills-track');
-  if (!track) return;
+  function scrollSkills(direction) {
+    const track = document.getElementById('skills-track');
+    if (!track) return;
 
-  const card = track.querySelector('.skill-group');
-  const step = card ? card.getBoundingClientRect().width + 16 : 260;
+    pauseCarousel(2200);
 
-  const maxScroll = track.scrollWidth - track.clientWidth;
+    const card = track.querySelector('.skill-group');
+    const step = card ? card.getBoundingClientRect().width + 16 : 260;
+    const maxScroll = track.scrollWidth - track.clientWidth;
+    const current = track.scrollLeft;
+    const next = current + direction * step;
 
-  if (direction === 1 && track.scrollLeft + step >= maxScroll) {
-    track.scrollTo({ left: 0, behavior: 'smooth' });
-  } 
-  else if (direction === -1 && track.scrollLeft <= 0) {
-    track.scrollTo({ left: maxScroll, behavior: 'smooth' });
-  } 
-  else {
-    track.scrollBy({ left: direction * step, behavior: 'smooth' });
+    if (direction === 1) {
+      if (current >= maxScroll - 4) {
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        track.scrollTo({ left: Math.min(next, maxScroll), behavior: 'smooth' });
+      }
+    } else {
+      if (current <= 4) {
+        track.scrollTo({ left: maxScroll, behavior: 'smooth' });
+      } else {
+        track.scrollTo({ left: Math.max(next, 0), behavior: 'smooth' });
+      }
+    }
   }
-}
 
 function scrollToSection(id) {
   const section = document.getElementById(id);
@@ -1216,9 +1221,18 @@ function scrollToSection(id) {
     section.scrollIntoView({ behavior: 'smooth' });
   }
 }
-  // Terminal logic
-  /* subtle carousel hint animation */
     let carouselPaused = false;
+  let carouselResumeTimer = null;
+  let carouselAutoTimer = null;
+  let isPointerDown = false;
+
+  function pauseCarousel(ms = 4500) {
+    carouselPaused = true;
+    if (carouselResumeTimer) clearTimeout(carouselResumeTimer);
+    carouselResumeTimer = setTimeout(() => {
+      if (!isPointerDown) carouselPaused = false;
+    }, ms);
+  }
 
   function autoScrollCarousel() {
     const track = document.getElementById('skills-track');
@@ -1226,36 +1240,78 @@ function scrollToSection(id) {
 
     const card = track.querySelector('.skill-group');
     const step = card ? card.getBoundingClientRect().width + 16 : 260;
-
     const maxScroll = track.scrollWidth - track.clientWidth;
 
-    if (track.scrollLeft + step >= maxScroll) {
+    if (maxScroll <= 0) return;
+
+    if (track.scrollLeft + step >= maxScroll - 4) {
       track.scrollTo({ left: 0, behavior: 'smooth' });
     } else {
       track.scrollBy({ left: step, behavior: 'smooth' });
     }
   }
 
-  /* auto scroll every 1 seconds */
-  setInterval(autoScrollCarousel, 1000);
+  carouselAutoTimer = setInterval(autoScrollCarousel, 3500);
 
-  /* pause when user interacts */
   const track = document.getElementById('skills-track');
 
   if (track) {
-    track.addEventListener('touchstart', () => carouselPaused = true);
+    /* mobile touch */
+    track.addEventListener('touchstart', () => {
+      isPointerDown = true;
+      pauseCarousel();
+    }, { passive: true });
+
     track.addEventListener('touchend', () => {
-      setTimeout(() => carouselPaused = false, 4000);
+      isPointerDown = false;
+      pauseCarousel();
+    }, { passive: true });
+
+    /* desktop hover */
+    track.addEventListener('mouseenter', () => {
+      carouselPaused = true;
     });
 
-    track.addEventListener('mouseenter', () => carouselPaused = true);
-    track.addEventListener('mouseleave', () => carouselPaused = false);
+    track.addEventListener('mouseleave', () => {
+      if (!isPointerDown) pauseCarousel(1200);
+    });
+
+    /* desktop drag / click interaction */
+    track.addEventListener('mousedown', () => {
+      isPointerDown = true;
+      pauseCarousel();
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (isPointerDown) {
+        isPointerDown = false;
+        pauseCarousel();
+      }
+    });
+
+    /* wheel / trackpad interaction */
+    track.addEventListener('wheel', () => {
+      pauseCarousel();
+    }, { passive: true });
+
+    /* keyboard focus interaction */
+    track.addEventListener('focusin', () => {
+      pauseCarousel();
+    });
+
+    /* manual scroll interaction */
+    let scrollDebounce;
+    track.addEventListener('scroll', () => {
+      if (isPointerDown) return;
+      carouselPaused = true;
+      clearTimeout(scrollDebounce);
+      scrollDebounce = setTimeout(() => {
+        carouselPaused = false;
+      }, 1200);
+    }, { passive: true });
   }
 
-    /* run occasionally */
-    setInterval(() => {
-      autoNudgeCarousel();
-    }, 1500);
+      // Terminal logic
     const terminalInput = document.getElementById('terminal-input');
       const terminalOutput = document.getElementById('terminal-output');
 
