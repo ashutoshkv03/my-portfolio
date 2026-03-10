@@ -90,6 +90,7 @@
       transition: color 0.2s;
     }
     .nav-links a:hover { color: var(--accent); }
+    .nav-logo { text-decoration: none; }
     .nav-links a.active {
     color: var(--accent);
   }
@@ -664,7 +665,7 @@
 <body>
 
 <nav>
-  <div class="nav-logo">A<span>.</span>Kande</div>
+  <a href="#about"class="nav-logo">A<span>.</span>Kande</a>
   <button class="nav-toggle" onclick="toggleMenu()" aria-label="Open menu">&#9776;</button>
   <ul class="nav-links" id="nav-links">
     <li><a href="#about" onclick="toggleMenu()">About</a></li>
